@@ -358,36 +358,117 @@ roles, either statically or dynamically, based on their
 responsibilities, ensuring a more scalable and manageable approach to
 access control.
 
-\section{Implementation of Access Control}
-Access control mechanisms are implemented using:
+Generally speaking, the set of users, as well as their assignment to
+roles, can be pretty dynamic, while the set of roles and the 
+permissions associated with them are more static.
 
-- \textbf{Access Control Lists (ACLs)}: Define permissions for each user-object
-pair.
-- \textbf{Capability Lists}: Assign access rights to subjects rather than
-objects.
-- \textbf{Authorization Tables}: Store access rules as a set of conditions.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{img/rbac schema.png}
+  \caption{RBAC relationship between users, roles and permission}
+  \label{fig:rbac}
+\end{figure}
 
-\section{Advanced Access Control Concepts}
-\subsection{Least Privilege and Separation of Privilege}
-The principle of least privilege ensures that subjects are granted the minimum
-access necessary to perform their tasks, reducing the risk of unauthorized
-actions.
+Figure \ref{fig:rbac} shows the relationship between users, roles, and
+permissions in an RBAC system. Users (subjects) are assigned roles,
+and roles are assigned permission to do operations on objects. A role
+can also inherit permissions from other roles, allowing for a
+hierarchical structure (which is what the recursive relationship in
+the figure represent).
 
-Separation of privilege divides access across multiple entities, requiring more
-than one authorization to perform critical actions, thereby mitigating insider
-threats.
+\subsubsection{Access Control Matrix Representation}
+As you can see in figure \ref{fig:rbac-matrix}, RBAC can be easily
+represented by a couple of access control matrix. In the first matrix
+the rows represent the users, while the columns represent the roles.
 
-\subsection{Role Hierarchies and Constraints in RBAC}
-Role hierarchies allow roles to inherit permissions from superior roles.
+The second one associates each role to the permission that it has on
+the objects.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{img/rbac matrix.png}
+  \caption{RBAC Access Control Matrix}
+  \label{fig:rbac-matrix}
+\end{figure}
+
+\subsubsection{Role Hierarchies}
+As previously mentioned, roles can inherit permissions from other
+roles. This is called role hierarchies, and it allows for a more
+flexible and scalable access control system. A subordinate job
+function may have a subset of the access rights of the superior job
+function, meaning that the user can perform all the operations that 
+the superior role can perform.
+
+An example of role hierarchy is shown in figure
+\ref{fig:role-hierarchy}. In this example, the role "Engineer"
+inherits the permissions of the role "Engineer dept", while the
+Directior has the highest level of permissions.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{img/role hierarchy.png}
+  \caption{Role Hierarchy}
+  \label{fig:role-hierarchy}
+\end{figure}
+
+In this context, the principles of separation of privilege and least
+privilege are very important. The first one uggests to break a single
+privilege among multiple independent subjects (component or user) so
+that more than one authorizations are required to perform an action,
+while the second one suggests that an entity should be given the
+minimum privileges and resources for the minimum period of time
+required to complete a task.
+
+\subsubsection{Constraints in RBAC}
 Constraints define conditions such as:
 
-- Mutually exclusive roles (a user can hold only one role in a set).
-- Cardinality limits (restricting the number of users per role).
-- Prerequisite roles (requiring users to hold a specific role before obtaining
-another).
+\begin{itemize}
+  \item Mutually exclusive roles (a user can hold only one role in a
+    set).
+  \item Cardinality limits (restricting the number of users per role).
+  \item Prerequisite roles (requiring users to hold a specific role
+    before obtaining another).
+\end{itemize}
 
-\subsection{ABAC and its Flexibility}
-ABAC offers a powerful and flexible access control model by evaluating
-attributes of subjects, objects, and environmental conditions. However, it
-requires high computational effort, making it more complex than DAC and RBAC.
+\subsection{Attribute-Based Access Control (ABAC)}
+Attribute-Based Access Control (ABAC) is a policy-driven access
+control mechanism that grants access based on attributes of users,
+objects, and the environment. 
 
+An ABAC model can define authorizations that express conditions on
+properties of both the resource and the subject, allowing to define
+policies for any desired combination of attributes that are more 
+flexible than the ones defined in DAC, MAC, and RBAC.
+This come at the cost of a more complexity, both in terms of
+implementation and performance, while also allowing to express very
+complex policies.
+
+\subsubsection{Subject attributes}
+A subject is an active entity (e.g., a user, an application, a
+process, or a device) that causes information to flow among objects or
+changes the system state.
+Each subject has associated attributes that define the identity and
+characteristics of the subject. Such attributes may include the
+subject’s identifier, name, organization, job title, and so on.
+A subject’s role can also be viewed as an attribute.
+
+\subsubsection{Object attributes}
+An object, also referred to as a resource , is a passive (in the
+context of the given request) information system-related entity (e.g.,
+devices, files, records, tables, processes, programs, networks,
+domains) containing or receiving information.
+
+As with subjects, objects have attributes that can be leveraged to
+make access control decisions.
+A Microsoft Word document, for example, may have attributes such as
+title, subject, date, and author.
+Object attributes can often be extracted from the metadata of the object.
+
+\subsubsection{Environment attributes}
+They describe the operational, technical, and even situational
+environment or context in which the information access occurs.
+For example, attributes, such as current date and time, the current
+virus/hacker activities, and the network’s security level (e.g.,
+Internet vs. intranet), are not associated with a particular subject
+nor a resource, but may nonetheless be relevant in applying an access
+control policy.
